@@ -112,7 +112,25 @@ def get_gpt_response(text_input):
     """
     try:
         print("Processing input with Gemini 1.5 Flash...")
-        response = genai(prompt=text_input)
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            generation_config={
+                "temperature": 1,
+                "top_p": 0.95,
+                "top_k": 40,
+                "max_output_tokens": 8192,
+                "response_mime_type": "text/plain",
+            },
+            system_instruction="""You are a chat assistant expert in human conversation.  Your responses should:
+                * Be natural and engaging, avoiding overly formal or technical language.
+                * Show empathy and understanding of the user's perspective.
+                * Adapt to the user's communication style and emotional tone.
+                * Provide helpful and relevant information while maintaining a conversational flow.
+                * Ask clarifying questions when necessary to ensure understanding.
+                * Avoid making assumptions or providing inaccurate information."""
+
+        )
+        response = model.generate_content(text_input)
         return response.text
     except Exception as e:
         print(f"Error during text generation: {e}")
